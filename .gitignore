@@ -1,0 +1,20 @@
+.env
+inputs/*
+!inputs/.gitkeep
+outputs/*
+!outputs/.gitkeep
+bin
+.DS_Store
+
+# Deno
+.deno
+
+# Deno cache
+.cache
+
+# Deno imports
+.imports
+
+# Deno std
+.std
+

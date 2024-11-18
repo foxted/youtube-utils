@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "build": "deno compile --allow-read --allow-write --allow-run --output ../../bin/extract-audio index.ts",
+    "run": "deno run --allow-read --allow-write --allow-run index.ts"
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.208.0/"
+  }
+}

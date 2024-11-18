@@ -1,0 +1,30 @@
+This project is a collection of Deno scripts to help with video production on YouTube. 
+
+Each script is placed in their own directory, within the `./src` directory, for example: `./src/extract-audio`.
+
+Each script is built using the Deno runtime, with two files minimum: 
+
+- `index.ts`: The main entry point for the script.
+- `README.md`: A markdown file containing the description, usage instructions, and any other relevant information about the script.
+- `deno.json`: A Deno configuration file to build the script, containing two tasks to build and run the script:
+  - `build`: Builds the executable
+  - `run`: Runs the script in development mode
+
+Each script is designed to be run standalone in the terminal, with the appropriate arguments.
+
+## Inputs & Outputs
+
+If the script requires a file as an input, it should be passed as an argument: 
+
+- As a file name, which will be read from an `./inputs` directory at the root of the project.
+- As a file name, which will be read from the current working directory.
+- As a file name, which will be read from the user's home directory.
+- A full absolute path to the file.
+
+If the script produces an output, it should be saved to the `./outputs` directory at the root of the project.
+
+## Markdown Files
+
+When generating markdown files, ensure that you escape your output properly, so that Cursor can render it correctly.
+
+Indent your code blocks to avoid rendering issues.
