@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+
+    steps:
+      - uses: google-github-actions/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
+          package-name: youtube-scripts
+          include-v-in-tag: true
+
+  build-and-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [macos, linux]
+        arch: [x86_64, arm64]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Build Executables
+        run: |
+          PLATFORM=${{ matrix.platform }} ARCH=${{ matrix.arch }} ./build.sh
+          # Create a directory for the binaries
+          mkdir -p bin
+          # Move built executables to bin directory
+          mv dist/* bin/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: executables-${{ matrix.platform }}-${{ matrix.arch }}
+          path: bin/*
+          retention-days: 1
+
+  upload-artifacts:
+    needs: [release-please, build-and-release]
+    runs-on: ubuntu-latest
+    if: ${{ needs.release-please.outputs.release_created }}
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-bin
+
+      - name: Upload Release Artifacts
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Upload all built artifacts to the release
+          gh release upload ${{ needs.release-please.outputs.tag_name }} release-bin/**/* --clobber
