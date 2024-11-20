@@ -13,12 +13,11 @@ jobs:
       tag_name: ${{ steps.release.outputs.tag_name }}
 
     steps:
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: simple
-          package-name: youtube-scripts
-          include-v-in-tag: true
+          token: ${{ github.token }}
 
   build-and-release:
     needs: release-please
